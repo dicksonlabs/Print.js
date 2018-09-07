@@ -136,30 +136,37 @@ export default {
       printFrame.srcdoc += '</head><body></body></html>'
     }
 
-    // Check printable type
-    switch (params.type) {
-      case 'pdf':
-        // Check browser support for pdf and if not supported we will just open the pdf file instead
-        if (Browser.isFirefox() || Browser.isEdge() || Browser.isIE()) {
-          console.info('PrintJS currently doesn\'t support PDF printing in Firefox, Internet Explorer and Edge.')
-          let win = window.open(params.fallbackPrintable, '_blank')
-          win.focus()
-          // Make sure there is no loading modal opened
-          if (params.showModal) Modal.close()
-          if (params.onLoadingEnd) params.onLoadingEnd()
-        } else {
-          Pdf.print(params, printFrame)
-        }
-        break
-      case 'image':
-        Image.print(params, printFrame)
-        break
-      case 'html':
-        Html.print(params, printFrame)
-        break
-      case 'json':
-        Json.print(params, printFrame)
-        break
-    }
+    return new Promise(function (resolve, reject) {
+      params.resolve = resolve;
+      params.reject = reject;
+
+      // Check printable type
+      switch (params.type) {
+        case 'pdf':
+          // Check browser support for pdf and if not supported we will just open the pdf file instead
+          if (Browser.isFirefox() || Browser.isEdge() || Browser.isIE()) {
+            console.info('PrintJS currently doesn\'t support PDF printing in Firefox, Internet Explorer and Edge.')
+            let win = window.open(params.fallbackPrintable, '_blank')
+            win.focus()
+            // Make sure there is no loading modal opened
+            if (params.showModal) Modal.close()
+            if (params.onLoadingEnd) params.onLoadingEnd()
+
+            resolve();
+          } else {
+            Pdf.print(params, printFrame)
+          }
+          break
+        case 'image':
+          Image.print(params, printFrame)
+          break
+        case 'html':
+          Html.print(params, printFrame)
+          break
+        case 'json':
+          Json.print(params, printFrame)
+          break
+      }
+    });
   }
 }

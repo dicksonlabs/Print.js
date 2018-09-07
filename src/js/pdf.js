@@ -13,6 +13,8 @@ export default {
       let req = new window.XMLHttpRequest()
       req.responseType = 'arraybuffer'
 
+      req.addEventListener('error', (error) => params.reject(error));
+
       req.addEventListener('load', () => {
         // Pass response data to a blob and create a local object url
         let localPdf = new window.Blob([req.response], {type: 'application/pdf'})

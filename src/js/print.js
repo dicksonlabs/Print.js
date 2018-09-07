@@ -48,7 +48,7 @@ const Print = {
   }
 }
 
-function finishPrint (iframeElement, params) {
+function finishPrintWithoutErrorHandling (iframeElement, params) {
   iframeElement.focus()
 
   // If Edge or IE, try catch with execCommand
@@ -89,6 +89,15 @@ function finishPrint (iframeElement, params) {
     }
 
     window.addEventListener(event, handler)
+  }
+}
+
+function finishPrint (iframeElement, params) {
+  try {
+    finishPrintWithoutErrorHandling(iframeElement, params);
+    params.resolve();
+  } catch (e) {
+    params.reject(e);
   }
 }
 
